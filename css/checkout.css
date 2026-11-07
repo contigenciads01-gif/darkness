@@ -1,0 +1,843 @@
+/* ==========================================================================
+   CHECKOUT EM PÁGINA INTEIRA - TABLET 17 PRO MAX
+   Estilos específicos do checkout de 3 etapas
+   ========================================================================== */
+
+:root {
+  --checkout-bg: #F5F5F4;
+  --checkout-card-bg: #FFFFFF;
+  --checkout-border: #E5E7EB;
+  --checkout-primary: #C26D3A;
+  --checkout-primary-hover: #A85A2E;
+  --checkout-primary-light: #FFF7ED;
+  --checkout-text: #1C1917;
+  --checkout-text-muted: #6B7280;
+  --checkout-error: #DC2626;
+  --checkout-success: #16A34A;
+}
+
+/* Container de tela cheia que cobre totalmente a página de produto */
+#checkout-fullscreen-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--checkout-bg);
+  color: var(--checkout-text);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  font-family: inherit;
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  visibility: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+#checkout-fullscreen-container.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #checkout-fullscreen-container {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Cabeçalho fixo no topo */
+.checkout-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--checkout-border);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.checkout-header-inner {
+  width: 100%;
+  max-w: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--checkout-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.checkout-back-btn:hover {
+  color: var(--checkout-text);
+  background-color: #F3F4F6;
+}
+
+.checkout-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkout-header-logo img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.checkout-header-security {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--checkout-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.checkout-header-security svg {
+  color: var(--checkout-success);
+}
+
+/* Área principal do conteúdo */
+.checkout-main-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 16px 64px 16px;
+}
+
+@media (min-width: 960px) {
+  .checkout-main-content {
+    padding: 32px 24px 80px 24px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+    align-items: start;
+  }
+}
+
+/* Barra de etapas (Progress Bar) */
+.checkout-steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.checkout-steps-bar::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 36px;
+  right: 36px;
+  height: 2px;
+  background-color: var(--checkout-border);
+  z-index: 1;
+}
+
+.checkout-step-indicator {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.checkout-step-indicator.clickable {
+  cursor: pointer;
+}
+
+.checkout-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 2px solid var(--checkout-border);
+  color: var(--checkout-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkout-step-indicator.active .checkout-step-circle {
+  background-color: var(--checkout-primary);
+  border-color: var(--checkout-primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(194, 109, 58, 0.2);
+}
+
+.checkout-step-indicator.completed .checkout-step-circle {
+  background-color: var(--checkout-success);
+  border-color: var(--checkout-success);
+  color: #FFFFFF;
+}
+
+.checkout-step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--checkout-text-muted);
+  white-space: nowrap;
+}
+
+.checkout-step-indicator.active .checkout-step-label {
+  color: var(--checkout-text);
+}
+
+/* Cartões das Etapas e Painéis */
+.checkout-card {
+  background: var(--checkout-card-bg);
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 960px) {
+  .checkout-card {
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+}
+
+.checkout-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.checkout-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkout-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  margin: 0;
+}
+
+.checkout-card-step-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--checkout-text-muted);
+}
+
+.checkout-card-subtitle {
+  font-size: 13px;
+  color: var(--checkout-text-muted);
+  margin-top: 2px;
+}
+
+/* Resumo de etapa concluída (quando recolhida) */
+.checkout-step-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.checkout-collapsed-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkout-collapsed-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  color: var(--checkout-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkout-collapsed-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--checkout-text);
+}
+
+.checkout-collapsed-detail {
+  font-size: 12px;
+  color: var(--checkout-text-muted);
+  margin-top: 1px;
+}
+
+.checkout-edit-step-btn {
+  background: transparent;
+  border: none;
+  color: var(--checkout-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.15s;
+}
+
+.checkout-edit-step-btn:hover {
+  background-color: var(--checkout-primary-light);
+}
+
+/* Formulários e Campos */
+.checkout-form-group {
+  margin-bottom: 16px;
+}
+
+.checkout-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.checkout-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .checkout-form-row.two-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+  .checkout-form-row.address-cols {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.checkout-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--checkout-text);
+  margin-bottom: 6px;
+}
+
+.checkout-input {
+  width: 100%;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--checkout-border);
+  background: #FFFFFF;
+  padding: 0 16px;
+  font-size: 16px; /* Evita zoom automático no iPhone */
+  color: var(--checkout-text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.checkout-input::placeholder {
+  color: #9CA3AF;
+}
+
+.checkout-input:focus {
+  border: 2px solid var(--checkout-primary);
+  box-shadow: 0 0 0 3px rgba(194, 109, 58, 0.15);
+  padding: 0 15px; /* Ajuste para o aumento de 1px da borda */
+}
+
+.checkout-input.error {
+  border-color: var(--checkout-error) !important;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
+}
+
+.checkout-field-error {
+  font-size: 13px;
+  color: var(--checkout-error);
+  margin-top: 5px;
+  display: none;
+}
+
+.checkout-field-error.visible {
+  display: block;
+}
+
+/* Botão Principal */
+.checkout-btn-primary {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  background-color: var(--checkout-primary);
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s, opacity 0.15s, transform 0.1s;
+  margin-top: 20px;
+}
+
+.checkout-btn-primary:hover:not(:disabled) {
+  background-color: var(--checkout-primary-hover);
+}
+
+.checkout-btn-primary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.checkout-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Abas de Pagamento (Etapa 3) */
+.checkout-payment-tabs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.checkout-payment-tabs.has-card {
+  grid-template-columns: 1fr 1fr;
+}
+
+.checkout-tab-btn {
+  height: 50px;
+  border-radius: 12px;
+  border: 1px solid var(--checkout-border);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--checkout-text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.checkout-tab-btn.active {
+  border-color: var(--checkout-primary);
+  background: var(--checkout-primary-light);
+  color: var(--checkout-primary);
+  box-shadow: 0 0 0 1px var(--checkout-primary);
+}
+
+.checkout-tab-btn.disabled,
+.checkout-tab-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #F9FAFB;
+}
+
+/* Banner "Como pagar com Pix" */
+.checkout-pix-info-banner {
+  background-color: color-mix(in oklab, var(--checkout-primary) 8%, white);
+  border: 1px solid color-mix(in oklab, var(--checkout-primary) 20%, white);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.checkout-pix-info-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--checkout-text);
+  text-align: center;
+}
+
+.checkout-pix-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.checkout-pix-step-arrow {
+  color: var(--checkout-primary);
+  font-weight: bold;
+}
+
+.checkout-pix-guide-full {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--checkout-border);
+}
+
+.checkout-pix-guide-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  margin-bottom: 10px;
+}
+
+.checkout-pix-guide-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  space-y: 8px;
+}
+
+.checkout-pix-guide-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--checkout-text);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.checkout-pix-guide-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--checkout-primary);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Resumo do Pedido (Coluna Direita no Desktop, Acordeão no Celular) */
+.checkout-order-summary-card {
+  background: var(--checkout-card-bg);
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 960px) {
+  .checkout-sidebar {
+    position: sticky;
+    top: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+/* Resumo recolhível no celular (< 960px) */
+.checkout-mobile-summary-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid var(--checkout-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--checkout-text);
+}
+
+@media (min-width: 960px) {
+  .checkout-mobile-summary-toggle {
+    display: none;
+  }
+}
+
+.checkout-product-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--checkout-border);
+  margin-bottom: 16px;
+}
+
+.checkout-product-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 1px solid var(--checkout-border);
+  object-fit: cover;
+  background: #F3F4F6;
+  flex-shrink: 0;
+}
+
+.checkout-product-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout-product-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--checkout-text);
+  line-height: 1.3;
+}
+
+.checkout-product-variant {
+  font-size: 12px;
+  color: var(--checkout-text-muted);
+  margin-top: 2px;
+}
+
+.checkout-product-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  white-space: nowrap;
+}
+
+.checkout-summary-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.checkout-summary-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--checkout-text-muted);
+}
+
+.checkout-summary-line.total {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  border-top: 1px solid var(--checkout-border);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.checkout-badge-free {
+  color: var(--checkout-success);
+  font-weight: 700;
+  font-size: 12px;
+  background: #DCFCE7;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Bloco de Confiança & Segurança */
+.checkout-trust-card {
+  background: #FFFFFF;
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.checkout-trust-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkout-trust-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkout-trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--checkout-text-muted);
+  line-height: 1.4;
+}
+
+.checkout-trust-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Selos oficiais de verificação (se seals.json tiver itens) */
+.checkout-seals-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.checkout-seal-link img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Avaliações reais de clientes (se reviews.json tiver itens) */
+.checkout-reviews-card {
+  background: #FFFFFF;
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.checkout-reviews-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.checkout-review-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  padding: 12px;
+  border: 1px solid var(--checkout-border);
+  border-radius: 12px;
+  background: #FAFAF9;
+}
+
+@media (min-width: 960px) {
+  .checkout-reviews-carousel {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+  .checkout-review-slide {
+    flex: initial;
+    margin-bottom: 12px;
+  }
+}
+
+/* Perguntas Frequentes (FAQ) */
+.checkout-faq-card {
+  background: #FFFFFF;
+  border: 1px solid var(--checkout-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.checkout-faq-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--checkout-text);
+  margin-bottom: 12px;
+}
+
+.checkout-faq-item {
+  border-bottom: 1px solid var(--checkout-border);
+  padding: 10px 0;
+}
+
+.checkout-faq-item:last-child {
+  border-bottom: none;
+}
+
+.checkout-faq-question {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--checkout-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-faq-answer {
+  font-size: 12px;
+  color: var(--checkout-text-muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* Rodapé institucional com dados da empresa */
+.checkout-footer {
+  margin-top: 40px;
+  padding: 24px 16px;
+  background: #FFFFFF;
+  border-top: 1px solid var(--checkout-border);
+  text-align: center;
+  font-size: 11px;
+  color: #6B7280;
+  line-height: 1.6;
+}
+
+.checkout-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.checkout-footer-links a {
+  color: var(--checkout-text-muted);
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.checkout-footer-links a:hover {
+  color: var(--checkout-text);
+}
+
+@keyframes checkout-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (min-width: 960px) {
+  .checkout-mobile-summary-wrapper {
+    display: none !important;
+  }
+}
