@@ -1,5 +1,6 @@
 const omega = require('../lib/omegapay');
 const invictus = require('../lib/invictus');
+const { notifyPixPaid } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -20,6 +21,13 @@ module.exports = async function handler(req, res) {
     const statusData = isOmegaConfigured
       ? await omega.getTransactionStatus(id)
       : await invictus.getTransactionStatus(id);
+
+    if (statusData && statusData.status === 'paid') {
+      notifyPixPaid({
+        transactionId: id,
+        amountFormatted: 'R$ 297,00'
+      }).catch(e => console.error('[Notify paid error]:', e.message));
+    }
 
     return res.status(200).json(statusData);
   } catch (err) {

@@ -1,5 +1,6 @@
 const omega = require('../lib/omegapay');
 const invictus = require('../lib/invictus');
+const { notifyPixPending } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   // Configuração de cabeçalhos de resposta
@@ -38,6 +39,13 @@ module.exports = async function handler(req, res) {
     const pixResult = isOmegaConfigured
       ? await omega.createPixTransaction({ variantId, customer, callbackUrl })
       : await invictus.createPixTransaction({ variantId, customer, postbackUrl: callbackUrl });
+
+    // Notificação Push de Venda Pendente (Pix Gerado)
+    notifyPixPending({
+      customer,
+      variantLabel: variantId,
+      amountFormatted: 'R$ 297,00'
+    }).catch(e => console.error('[Notify error]:', e.message));
 
     return res.status(200).json(pixResult);
   } catch (err) {

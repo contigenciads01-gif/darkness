@@ -16,6 +16,12 @@
   <meta property="og:image" content="images/08c2db23fcd06b9a225fe90efc8fc06b_1793487567953.png">
   <meta name="twitter:image" content="images/08c2db23fcd06b9a225fe90efc8fc06b_1793487567953.png">
   <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#C26D3A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Tablet 17 Pro">
 
   <!-- Preloads for performance -->
   <link rel="preload" as="image" href="images/tablet-cinza.webp">
@@ -370,5 +376,43 @@
   <!-- App logic & Pix checkout -->
   <script src="js/app.js"></script>
   <script src="js/pix-checkout.js"></script>
+
+  <!-- PWA & Service Worker -->
+  <div id="pwa-install-pill" style="display:none;position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:45;background:#1C1917;color:#FFFFFF;padding:8px 16px;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.25);font-size:12px;font-weight:600;align-items:center;gap:8px;cursor:pointer;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+    <span>Instalar aplicativo na tela inicial</span>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+
+    let deferredPrompt = null;
+    const installPill = document.getElementById('pwa-install-pill');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installPill) installPill.style.display = 'flex';
+    });
+
+    if (installPill) {
+      installPill.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        installPill.style.display = 'none';
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      if (installPill) installPill.style.display = 'none';
+      deferredPrompt = null;
+    });
+  </script>
 </body>
 </html>

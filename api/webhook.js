@@ -1,5 +1,6 @@
 const omega = require('../lib/omegapay');
 const invictus = require('../lib/invictus');
+const { notifyPixPaid } = require('../lib/notify');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -34,6 +35,10 @@ module.exports = async function handler(req, res) {
 
     if (verified.status === 'paid') {
       console.log(`[Pedido Confirmado] Pedido referente à transação ${transactionId} marcado como pago.`);
+      notifyPixPaid({
+        transactionId,
+        amountFormatted: 'R$ 297,00'
+      }).catch(e => console.error('[Notify webhook paid error]:', e.message));
     }
 
     return res.status(200).json({ received: true, status: verified.status });
