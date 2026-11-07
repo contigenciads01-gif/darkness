@@ -1,4 +1,5 @@
-const { createPixTransaction } = require('../lib/invictus');
+const omega = require('../lib/omegapay');
+const invictus = require('../lib/invictus');
 
 module.exports = async function handler(req, res) {
   // Configuração de cabeçalhos de resposta
@@ -25,18 +26,18 @@ module.exports = async function handler(req, res) {
 
     const { variantId, customer } = body;
 
-    // Constrói postbackUrl apenas se for HTTPS válido
+    // Constrói callbackUrl apenas se for HTTPS válido
     const baseUrl = process.env.PUBLIC_BASE_URL;
-    let postbackUrl = undefined;
+    let callbackUrl = undefined;
     if (baseUrl && typeof baseUrl === 'string' && baseUrl.startsWith('https://')) {
-      postbackUrl = `${baseUrl.replace(/\/+$/, '')}/api/webhook`;
+      callbackUrl = `${baseUrl.replace(/\/+$/, '')}/api/webhook`;
     }
 
-    const pixResult = await createPixTransaction({
-      variantId,
-      customer,
-      postbackUrl
-    });
+    // Prioriza OmegaPay se as credenciais estiverem configuradas
+    const isOmegaConfigured = !!(process.env.OMEGA_PUBLIC_KEY && process.env.OMEGA_SECRET_KEY);
+    const pixResult = isOmegaConfigured
+      ? await omega.createPixTransaction({ variantId, customer, callbackUrl })
+      : await invictus.createPixTransaction({ variantId, customer, postbackUrl: callbackUrl });
 
     return res.status(200).json(pixResult);
   } catch (err) {
@@ -45,7 +46,7 @@ module.exports = async function handler(req, res) {
 
     let message = 'Não foi possível gerar o Pix agora. Tente novamente.';
     if (err.message && err.message.includes('CONFIG_ERROR')) {
-      message = 'Chave INVICTUS_API_KEY não configurada na Vercel (Project Settings > Environment Variables). Adicione a variável e redeploy.';
+      message = 'Credenciais da API não configuradas na Vercel (Project Settings > Environment Variables). Adicione OMEGA_PUBLIC_KEY e OMEGA_SECRET_KEY.';
     } else if (status === 400 || (err.message && status !== 500)) {
       message = err.message;
     }

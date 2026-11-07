@@ -1,4 +1,5 @@
-const { getTransactionStatus } = require('../lib/invictus');
+const omega = require('../lib/omegapay');
+const invictus = require('../lib/invictus');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -15,7 +16,11 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const statusData = await getTransactionStatus(id);
+    const isOmegaConfigured = !!(process.env.OMEGA_PUBLIC_KEY && process.env.OMEGA_SECRET_KEY);
+    const statusData = isOmegaConfigured
+      ? await omega.getTransactionStatus(id)
+      : await invictus.getTransactionStatus(id);
+
     return res.status(200).json(statusData);
   } catch (err) {
     if (err.statusCode === 429) {
