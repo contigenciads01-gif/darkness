@@ -41,9 +41,14 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(pixResult);
   } catch (err) {
     const status = err.statusCode || 500;
-    const message = status === 400
-      ? err.message
-      : 'Não foi possível gerar o Pix agora. Tente novamente.';
+    console.error('[API /api/pix Error]:', err.message, 'Status:', status);
+
+    let message = 'Não foi possível gerar o Pix agora. Tente novamente.';
+    if (err.message && err.message.includes('CONFIG_ERROR')) {
+      message = 'Chave INVICTUS_API_KEY não configurada na Vercel (Project Settings > Environment Variables). Adicione a variável e redeploy.';
+    } else if (status === 400 || (err.message && status !== 500)) {
+      message = err.message;
+    }
 
     return res.status(status).json({ error: message });
   }
