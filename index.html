@@ -357,7 +357,7 @@
 
       <!-- STICKY BOTTOM BUY BUTTON -->
       <div class="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[480px] border-t border-border bg-background/95 backdrop-blur-md px-4 py-3">
-        <a id="bottom-buy-btn" href="https://seguro.veromix.shop/api/public/shopify?product=2788514257293&amp;store=27885" class="block w-full rounded-full bg-gradient-copper py-3.5 text-center transition-all hover:brightness-105 active:scale-[0.99] shadow-md">
+        <a id="bottom-buy-btn" data-variant-id="modelo-2" href="https://seguro.veromix.shop/api/public/shopify?product=2788514257293&amp;store=27885" class="block w-full rounded-full bg-gradient-copper py-3.5 text-center transition-all hover:brightness-105 active:scale-[0.99] shadow-md">
           <span class="block text-lg font-bold text-primary-foreground leading-tight">Comprar agora</span>
           <span id="bottom-buy-subtitle" class="block text-xs text-primary-foreground/90 font-medium">Azul · R$ 297,00 · Frete grátis</span>
         </a>
@@ -366,7 +366,8 @@
     </div>
   </div>
 
-  <!-- App logic -->
+  <!-- App logic & Pix checkout -->
   <script src="js/app.js"></script>
+  <script src="js/pix-checkout.js"></script>
 </body>
 </html>

@@ -184,7 +184,7 @@
 
   // 3. Variant Selection
   function initVariantSelection() {
-    const variantBtns = document.querySelectorAll('[data-variant-id]');
+    const variantBtns = document.querySelectorAll('button[data-variant-id]');
     const buyBtn = document.getElementById('bottom-buy-btn');
     const buySub = document.getElementById('bottom-buy-subtitle');
     const gallery = document.getElementById('product-gallery');
@@ -216,6 +216,7 @@
       // Update bottom checkout bar
       if (buyBtn) {
         buyBtn.href = buildCheckoutUrl(variant.checkoutUrl);
+        buyBtn.dataset.variantId = variant.id;
       }
       if (buySub) {
         buySub.textContent = `${variant.label} · R$ 297,00 · Frete grátis`;
@@ -241,9 +242,10 @@
       });
     });
 
-    // Set initial link
+    // Set initial link and dataset
     if (buyBtn && currentSelected) {
       buyBtn.href = buildCheckoutUrl(currentSelected.checkoutUrl);
+      buyBtn.dataset.variantId = currentSelected.id;
     }
   }
 
