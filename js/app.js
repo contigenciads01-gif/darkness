@@ -7,8 +7,8 @@
       id: 'modelo-1',
       label: 'Cinza',
       imageIndex: 1,
-      stockKind: 'esgotado',
-      stockLabel: 'Esgotado',
+      stockKind: 'low',
+      stockLabel: 'Últimas 3 peças',
       checkoutUrl: 'https://seguro.veromix.shop/api/public/shopify?product=2788527241455&store=27885'
     },
     {
@@ -16,15 +16,15 @@
       label: 'Azul',
       imageIndex: 2,
       stockKind: 'low',
-      stockLabel: 'Últimas 4 peças',
+      stockLabel: 'Últimas 5 peças',
       checkoutUrl: 'https://seguro.veromix.shop/api/public/shopify?product=2788514257293&store=27885'
     },
     {
       id: 'modelo-3',
       label: 'Laranja',
       imageIndex: 3,
-      stockKind: 'esgotado',
-      stockLabel: 'Esgotado',
+      stockKind: 'low',
+      stockLabel: 'Últimas 2 peças',
       checkoutUrl: 'https://seguro.tiktobrasil.shop/api/public/shopify?product=2788532695826&store=27885'
     },
     {
@@ -40,7 +40,7 @@
       label: 'Rosa',
       imageIndex: 5,
       stockKind: 'low',
-      stockLabel: 'Últimas 2 peças',
+      stockLabel: 'Últimas 7 peças',
       checkoutUrl: 'https://seguro.veromix.shop/api/public/shopify?product=2788595268685&store=27885'
     }
   ];
